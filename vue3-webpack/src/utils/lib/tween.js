@@ -55,7 +55,10 @@ export default {
                     v = {};
                     for(let k in from) {
                         if(to && to.hasOwnProperty(k)) {
-                            v[k] = fun(runTime, Number(from[k]), to[k], time);
+                            v[k] = fun(runTime, from[k], to[k], time);
+                            if(v[k] > to[k]) {
+                                v[k] = to[k];
+                            }
                         }
                     }
                 } else {
