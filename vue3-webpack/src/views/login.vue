@@ -5,6 +5,7 @@
         <el-button type="primary" @click="showToast">toast</el-button>
         <el-button type="primary" @click="modal.success('success')">modal</el-button>
         <el-button type="primary" @click="startAnim">startAnim</el-button>
+        <el-button type="primary" @click="startAnim2">startAnim2</el-button>
         <div class="anim-wrap">
             <div class="child" :style="animStyle">{{test}}</div>
         </div>
@@ -13,6 +14,8 @@
     </div>
 </template>
 <script setup name="login">
+import { $t } from '@/autoImportUtils';
+
 
     console.log(process.env);
     const modal = $modal;
@@ -67,6 +70,29 @@
             }
         });
     }
+
+    function startAnim2() {
+        if(animCancel) {
+            animCancel.cancel();
+        }
+        animCancel = $t.seriesTween({
+            ts: [
+                {
+                    from: {left: 0, top: 0},
+                    to: {left: 50, top: 50}
+                },
+                {
+                    from: {left: 50, top: 50},
+                    to: {left: 30, top: 60}
+                },
+            ],
+            cb: (v) => {
+                style.left = v.left;
+                style.top = v.top;
+            }
+        })
+    }
+
 </script>
 <style lang='scss'>
 .anim-wrap {
