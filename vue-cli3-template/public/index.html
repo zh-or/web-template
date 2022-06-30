@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+    <% if(htmlWebpackPlugin.options.isProduction){ %>
+    <title><%= htmlWebpackPlugin.options.title %></title>
+    <% } else {%>
+    <title><%= htmlWebpackPlugin.options.title %> - dev</title>
+    <% } %>
+</head>
+<body>
+<noscript>
+
+</noscript>
+
+<% if(htmlWebpackPlugin.options.useCND){ %>
+<!--cdn 引入-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/element-ui/2.11.1/theme-chalk/index.css">
+<script src="https://cdn.bootcss.com/vue/2.6.10/vue.runtime.min.js"></script>
+<script src="https://cdn.bootcss.com/vue-router/3.0.2/vue-router.min.js"></script>
+<script src="https://cdn.bootcss.com/vuex/3.1.0/vuex.min.js"></script>
+<script src="https://cdn.bootcss.com/axios/0.18.0/axios.min.js"></script>
+<script src="https://cdn.bootcss.com/element-ui/2.11.1/index.js"></script>
+<% } %>
+<div id="app"></div>
+<script type="application/javascript">
+    var useCND = <%=htmlWebpackPlugin.options.useCND %>;
+    var isProduction = <%=htmlWebpackPlugin.options.isProduction %>;
+</script>
+</body>
+</html>

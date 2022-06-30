@@ -1,0 +1,36 @@
+.mu-fade-wrap {
+    position: relative;
+}
+
+.mu-loading-wrap {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 20151223;
+}
+
+.mu-loading-wrap__fixed {
+    position: fixed;
+}
+
+.mu-loading-text {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-top: 6px;
+}
+
+.mu-fade-transition-enter-active,
+.mu-fade-transition-leave-active {
+    transition: opacity .45s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.mu-fade-transition-enter,
+.mu-fade-transition-leave-active {
+    opacity: 0 !important;
+}

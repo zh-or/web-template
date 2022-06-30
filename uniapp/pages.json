@@ -1,0 +1,81 @@
+{
+    "pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+        {
+            "path": "pages/home",
+            "style": {
+                "navigationBarTitleText": "home"
+            }
+        },
+        {
+            "path": "pages/share",
+            "style": {
+                "navigationBarTitleText": "share"
+            }
+        },
+        {
+            "path": "pages/service",
+            "style": {
+                "navigationBarTitleText": "service"
+            }
+        },
+        {
+            "path": "pages/great",
+            "style": {
+                "navigationBarTitleText": "great"
+            }
+        },
+        {
+            "path": "pages/my",
+            "style": {
+                "navigationBarTitleText": "my"
+            }
+        }
+    ],
+    "tabBar": {
+        "color": "#666666",
+        "selectedColor": "#00ADB5",
+        "backgroundColor": "#FFFFFF",
+        "spacing": "2px",
+        "list": [
+            {
+                "pagePath": "pages/home",
+                "text": "首页",
+                "iconPath": "static/icon/tab1.png",
+                "selectedIconPath": "static/icon/tab1-s.png"
+            },
+            {
+                "pagePath": "pages/share",
+                "text": "共享中心",
+                "iconPath": "static/icon/tab2.png",
+                "selectedIconPath": "static/icon/tab2-s.png"
+            },
+            {
+                "pagePath": "pages/service",
+                "text": "服务",
+                "iconPath": "static/icon/tab3.png",
+                "selectedIconPath": "static/icon/tab3-s.png"
+            },
+            {
+                "pagePath": "pages/great",
+                "text": "优选",
+                "iconPath": "static/icon/tab4.png",
+                "selectedIconPath": "static/icon/tab4-s.png"
+            },
+            {
+                "pagePath": "pages/my",
+                "text": "我的",
+                "iconPath": "static/icon/tab4.png",
+                "selectedIconPath": "static/icon/tab4-s.png"
+            }
+        ]
+    },
+    "easycom": {
+        "^u-(.*)": "@/uni_modules/uview-ui/components/u-$1/u-$1.vue"
+    },
+    "globalStyle": {
+        "navigationBarTextStyle": "black",
+        "navigationBarTitleText": "uni-app",
+        "navigationBarBackgroundColor": "#F8F8F8",
+        "backgroundColor": "#F8F8F8"
+    }
+}

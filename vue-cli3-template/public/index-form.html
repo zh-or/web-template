@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        />
+        <!-- <link rel="icon" href="<%= BASE_URL %>favicon.ico" /> -->
+        <title><%= htmlWebpackPlugin.options.title %></title>
+
+        <!-- Theme Color -->
+        <!-- Chrome, Firefox OS and Opera -->
+        <meta name="theme-color" content="#0091FF" />
+        <!-- Windows Phone -->
+        <meta name="msapplication-navbutton-color" content="#0091FF" />
+        <!-- iOS Safari -->
+        <meta name="apple-mobile-web-app-status-bar-style" content="#0091FF" />
+        <style type="text/css">
+            body,
+            html {
+                padding: 0;
+                margin: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <noscript>
+            <strong><%= htmlWebpackPlugin.options.title %></strong>
+        </noscript>
+        <div id="app">
+            <div
+                style="opacity: 1;display: flex;align-items: center;justify-content: center;"
+                class="loading-wrap"
+            >
+                <svg viewBox="25 25 50 50">
+                    <circle cx="50" cy="50" r="20" fill="none"></circle>
+                </svg>
+            </div>
+        </div>
+    </body>
+</html>

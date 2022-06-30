@@ -1,0 +1,52 @@
+.print-view .print-title {
+    padding: 10px;
+}
+
+.print-view .print-title .title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.print-view .print-title .info {
+    padding: 10px;
+}
+
+.print-view .print-table {
+    border: 1px solid #EBEEF5;
+    width: 100%;
+}
+
+.print-view th, .print-view td {
+    padding: 10px 5px;
+    border-right: 1px solid #EBEEF5;
+    border-bottom: 1px solid #EBEEF5;
+}
+
+.print-view th:nth-last-child(1), .print-view td:nth-last-child(1) {
+    border-right: 0;
+}
+
+
+.pd10 {
+    padding: 10px !important;
+}
+
+.ptb10 {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+
+.cf:after {
+    content: " ";
+    display: table;
+    clear: both;
+}
+
+.fl {
+    float: left;
+}
+
+.fr {
+    float: right;
+}
