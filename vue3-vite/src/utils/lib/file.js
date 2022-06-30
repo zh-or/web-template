@@ -52,4 +52,59 @@ export default {
         };
         input.click();
     },
+    reSizeImg(file, size) {
+        /*从文件读取图片并压缩*/
+        let start = Date.now();
+        console.log('压缩前大小:', file.size);
+        return new Promise((res, rej) => {
+            try {
+                let reader = new FileReader();
+                reader.onload = function () {
+                    let img = new Image();
+                    img.src = this.result;
+                    img.onload = function () {
+                        let self = this;
+                        let w = self.width,
+                            h = self.height,
+                            scale = w / h,
+                            quality = 0.7;
+                        w = size.width;
+                        h = size.height || (w * scale);
+
+                        let canvas = document.createElement('canvas');
+                        let ctx = canvas.getContext('2d');
+                        let anw = document.createAttribute("width");
+                        anw.nodeValue = w;
+                        let anh = document.createAttribute("height");
+                        anh.nodeValue = h;
+                        canvas.setAttributeNode(anw);
+                        canvas.setAttributeNode(anh);
+                        ctx.drawImage(self, 0, 0, w, h);
+                        canvas.toBlob((f) => {
+                            console.log('压缩后大小:', f.size, '压缩用时:', Date.now() - start);
+                            res(f);
+                        })
+                    }
+                }
+                reader.readAsDataURL(file);
+            } catch (e) {
+                rej(e);
+            }
+        });
+
+    },
+    getObjectURL(file) {
+        if (!file) {
+            return '';
+        }
+        let url = null;
+        if (window.createObjectURL != undefined) {
+            url = window.createObjectURL(file);
+        } else if (window.URL != undefined) {
+            url = window.URL.createObjectURL(file);
+        } else if (window.webkitURL != undefined) {
+            url = window.webkitURL.createObjectURL(file);
+        }
+        return url;
+    },
 }
