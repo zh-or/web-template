@@ -1,5 +1,6 @@
 
 import base from './base.js';
+import obj from './obj.js';
 /*
  * 缓动函数
  * @param t 动画已消耗时间
@@ -30,6 +31,38 @@ const funs = {
 
 export default {
     tweenType: 'linear,easeIn,strongEaseIn,strongEaseOut,sineaseIn,sineaseOut'.split(','),
+    seriesTween(opt) {
+        opt = opt || {};
+        opt.type = opt.type || 'linear';
+        opt.ts = opt.ts || [];
+        if(opt.ts.length <= 0) {
+            throw new Error('动画队列[ts]不能为空.');
+        }
+        let cancel = {
+            obj: null,
+            isCanceled: false,
+            cancel: function() {
+                if(this.obj) {
+                    obj.cancel();
+                }
+                this.isCanceled = true;
+            }
+        };
+        let runAnim = (bound) => {
+            if(bound >= opt.ts.length) {
+                return;
+            }
+            let item = opt.ts[bound];
+            cancel.obj = this.tween(opt.type, item.form, item.to, (v, end) => {
+                opt.cb && opt.cb(v, end);
+                if(end) {
+                    runAnim(bound ++);
+                }
+            });
+        }
+        runAnim(0);
+        return cancel;
+    },
     tween(type, from, to, time, callback) {
 
         let start = - 1, runTime = 0, cancel = {
@@ -63,9 +96,11 @@ export default {
                     }
                 } else {
                     v = fun(runTime, from, to, time);
-                    if(v > to) v = to;
+                    if(v > to) {
+                        v = to;
+                    }
                 }
-                callback(v);
+                callback(v, runTime >= time);
             } else {
                 console.error('tween type is not support:', type);
             }
