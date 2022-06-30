@@ -41,10 +41,14 @@
         console.error('1');
     }
 
-    let left = ref(0);
+    let style = reactive({
+        left: 0,
+        top: 0
+    });
     const animStyle = computed(_ => {
         return {
-            left: left.value + '%'
+            left: style.left + '%',
+            top: style.top + 'px'
         }
     });
 
@@ -54,15 +58,20 @@
         if(animCancel) {
             animCancel.cancel();
         }
-        animCancel = $t.tween('linear', 0, 100, 2000, v => {
-            left.value = v;
+        let s = Date.now();
+        animCancel = $t.tween('linear', {left: 0, top: 0}, {left: 50, top: 50}, 2000, v => {
+            style.left = v.left;
+            style.top = v.top;
+            if(v.top >= 50) {
+                console.log('t:', Date.now() - s);
+            }
         });
     }
 </script>
 <style lang='scss'>
 .anim-wrap {
     position: relative;
-    height: 40px;
+    height: 80px;
     .child {
         display: inline-block;
         position: absolute;

@@ -31,6 +31,7 @@ const funs = {
 export default {
     tweenType: 'linear,easeIn,strongEaseIn,strongEaseOut,sineaseIn,sineaseOut'.split(','),
     tween(type, from, to, time, callback) {
+
         let start = - 1, runTime = 0, cancel = {
             id: null,
             isCanceled: false,
@@ -49,8 +50,18 @@ export default {
             runTime = t - start;
             let fun = funs[type];
             if(fun) {
-                let v = fun(runTime, from, to, time);
-                if(v > to) v = to;
+                let v = null;
+                if(typeof from === 'object') {
+                    v = {};
+                    for(let k in from) {
+                        if(to && to.hasOwnProperty(k)) {
+                            v[k] = fun(runTime, Number(from[k]), to[k], time);
+                        }
+                    }
+                } else {
+                    v = fun(runTime, from, to, time);
+                    if(v > to) v = to;
+                }
                 callback(v);
             } else {
                 console.error('tween type is not support:', type);
