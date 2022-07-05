@@ -35,6 +35,7 @@ export default {
         opt = opt || {};
         opt.type = opt.type || 'linear';
         opt.ts = opt.ts || [];
+        opt.time = opt.time || 1000;
         if(opt.ts.length <= 0) {
             throw new Error('动画队列[ts]不能为空.');
         }
@@ -53,7 +54,7 @@ export default {
                 return;
             }
             let item = opt.ts[bound];
-            cancel.obj = this.tween(opt.type, item.form, item.to, (v, end) => {
+            cancel.obj = this.tween(opt.type, item.form, item.to, opt.time, (v, end) => {
                 opt.cb && opt.cb(v, end);
                 if(end) {
                     runAnim(bound ++);
