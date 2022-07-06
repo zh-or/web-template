@@ -32,6 +32,7 @@
         }
     ],
     "tabBar": {
+        //"custom": true, //自定义tabbar https://uniapp.dcloud.net.cn/collocation/pages.html#tabbar
         "color": "#666666",
         "selectedColor": "#00ADB5",
         "backgroundColor": "#FFFFFF",

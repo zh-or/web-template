@@ -76,22 +76,9 @@ $uni-color-paragraph: #3F536E; // 文章段落颜色
 $uni-font-size-paragraph:15px;
 
 
-.icon {
-    height: 1rem;
-    width: 1rem;
-    padding: 2px;
-    vertical-align: middle;
-    display: inline-block;
-    background-position: center center;
-    background-size: 100%;
-    background-repeat: no-repeat;
-}
-/*
-.icon-menu-main4{
-    background-image: url("../imgIcon/menu/今日头条管理.png");
-}*/
-
-
+$tab-bar-height: 54px;//tab-bar 高度
+$home-nav-bar-height: 88rpx;//导航栏高度
+$page-lr-pd: 24rpx;// 页面左右整体边距
 
 @import '@/uni_modules/uview-ui/theme.scss';
-@import './main.scss';
+@import './env.scss';
