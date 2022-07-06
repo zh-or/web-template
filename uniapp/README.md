@@ -1,2 +1,0 @@
-# gccy-applet-guest
-

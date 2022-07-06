@@ -1,4 +1,4 @@
-import {t} from 'lib';
+import t from 'lib';
 import modal from '../plugins/modal';
 import api from '../api/api';
 import notify from '@zh-or/notify-js';

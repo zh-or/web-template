@@ -1,4 +1,4 @@
-import {request} from 'lib';
+import request from 'lib/request';
 import {getHost} from "./link";
 
 let req = new request({
