@@ -1,6 +1,25 @@
 export default {
     paths: [],
     animation: 'none',
+    resultSuccess: null,
+    resultError: null,
+    pushForResult(opt) {
+        return new Promise((resolve, reject) => {
+            this.resultSuccess = resolve;
+            this.resultError = reject;
+            this.push(opt);
+        });
+    },
+    setResult(data, back = true) {
+        try {
+            this.resultSuccess && this.resultSuccess(data);
+        } catch(e) {
+            this.resultError && this.resultError(e);
+        }
+        if(back) {
+            this.back(1);
+        }
+    },
     /**
      * 保留当前页面，跳转到应用内的某个页面
      * @param opt
