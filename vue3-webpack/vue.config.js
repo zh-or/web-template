@@ -9,9 +9,12 @@ const {ElementPlusResolver} = require('unplugin-vue-components/resolvers');
 
 let isProduction = process.env.NODE_ENV === 'production';
 
+console.log('argv', process.argv);
+
 module.exports = defineConfig({
     transpileDependencies: isProduction,
     filenameHashing: isProduction,
+    productionSourceMap: false,
     configureWebpack: {
         plugins: [
             require('unplugin-auto-import/webpack')({
@@ -49,13 +52,14 @@ module.exports = defineConfig({
             .options({
                 symbolId: 'icon-[name]',
                 plugins: [{
-                    name: 'removeAttrs', // 必须指定name！
+                    name: 'removeAttrs', // 必须指定nameT！
                     params: {attrs: 'fill'}
                 }]
             })
             .end();
     },
     css: {
+        //extract: true,
         sourceMap: !isProduction,
     },
     devServer: {
