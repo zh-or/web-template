@@ -5,7 +5,8 @@ const fs   = require('fs');
 //把变量加到scss里面
 fs.writeFileSync(
     path.join(__dirname, 'env.scss'), 
-    `$img: "${envs.VUE_APP_STATIC_HOST}";`
+    `/* 自动生成的文件, 修改无用! */
+$img: "${envs.VUE_APP_STATIC_HOST}";`
 );
 
 module.exports = {

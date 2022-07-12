@@ -14,7 +14,6 @@
     </div>
 </template>
 <script setup name="login">
-import { $t } from '@/autoImportUtils';
 
 
     console.log(process.env);
@@ -62,7 +61,7 @@ import { $t } from '@/autoImportUtils';
             animCancel.cancel();
         }
         let s = Date.now();
-        animCancel = $t.tween('linear', {left: 0, top: 0}, {left: 50, top: 50}, 2000, v => {
+        animCancel = $t.tween('easeIn', {left: 0, top: 0}, {left: 50, top: 50}, 2000, v => {
             style.left = v.left;
             style.top = v.top;
             if(v.top >= 50) {
