@@ -9,7 +9,6 @@
     "dependencies": {
         "@wangeditor/editor": "^5.1.1",
         "@wangeditor/editor-for-vue": "^5.1.11",
-        "@zh-or/notify-js": "^1.0.0",
         "element-plus": "^2.2.6",
         "fuse.js": "6.5.3",
         "nprogress": "0.2.0",
