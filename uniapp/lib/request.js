@@ -136,49 +136,27 @@ Request.prototype = {
 
         try {
             let successFun = function (res) {
-                let obj = res;
-                obj.data = res.data;
-                obj.statusCode = res.statusCode;
-                let statusCode = res.statusCode;
-                if ((statusCode >= 200 && statusCode < 300) || statusCode == 304) {
-                    try {
-                        let res = {
-                            ...arg,
-                        };
-                        self.responseFilter.forEach((fun) => {
-                            res = fun.call(self, res, obj);
-                        });
-                        if (res) arg.success.call(self, res, obj);
-                    } catch (e) {
-                        arg.error.call(self, e, obj);
-                    }
-                } else if (statusCode == 500) {
-                    let isHold = false;
-                    self.errorFilter.forEach(f => {
-                        if (f.call(self, obj)) {
-                            isHold = true;
-                        }
+                let obj = {
+                    request: arg,
+                    response: res,
+                    statusCode: res.statusCode
+                };
+                try {
+                    let res = {
+                    };
+                    self.responseFilter.forEach((fun) => {
+                        res = fun.call(self, res, obj);
                     });
-                    if (!isHold) {
-                        arg.error.call(self, '服务器出现错误~', obj);
-                    }
-                } else {
-                    let isHold = false;
-                    self.errorFilter.forEach(f => {
-                        if (f.call(self, obj)) {
-                            isHold = true;
-                        }
-                    });
-                    if (!isHold) {
-                        arg.error.call(self, '状态错误:' + statusCode, obj);
-                    }
+                    if (res) arg.success.call(self, res, obj);
+                } catch (e) {
+                    arg.error.call(self, e, obj);
                 }
             }
 
             if (isUpload) {
                 let fs = null;
-                if(Array.isArray(arg.file)) {
-                    fs = arg.file;
+                if(Array.isArray(arg.file.path)) {
+                    fs = arg.file.path;
                 }
                 uni.uploadFile({
                     'url': self.host + arg.url,
@@ -187,17 +165,17 @@ Request.prototype = {
                     'filePath': arg.file.path,
                     'name': arg.file.name,
                     'header': arg.headers,
-                    'timeout': TIMEOUT,
+                    'timeout': arg.timeout,
                     'success': successFun,
-                    'fail': function () {
+                    'fail': function (e) {
                         let isHold = false;
                         self.errorFilter.forEach(f => {
-                            if (f.call(self, arg)) {
+                            if (f.call(self, e)) {
                                 isHold = true;
                             }
                         });
                         if (!isHold) {
-                            arg.error.call(self, '服务器出现错误~', arg);
+                            arg.error.call(self, e);
                         }
                     }
                 });
@@ -209,19 +187,22 @@ Request.prototype = {
                     'url': self.host + arg.url,
                     'data': arg.data,
                     'header': arg.headers,
-                    'timeout': TIMEOUT,
+                    'timeout': arg.timeout,
                     'method': arg.method,
                     'success': successFun,
-                    'fail': function () {
+                    'fail': function (e) {
                         let isHold = false;
                         self.errorFilter.forEach(f => {
-                            if (f.call(self, arg)) {
+                            if (f.call(self, e)) {
                                 isHold = true;
                             }
                         });
                         if (!isHold) {
-                            arg.error.call(self, '服务器出现错误~', arg);
+                            arg.error.call(self, e);
                         }
+                    },
+                    'complete': function() {
+                        //uni.showToast({title:'complete url:' + arg.url})
                     }
                 })
             }
