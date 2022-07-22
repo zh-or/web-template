@@ -1,4 +1,34 @@
-export default{
+function _calc(a, m, b) {
+    let _a = Number(Number(a).toFixed(2)) * 100,
+        _b = Number(Number(b).toFixed(2)) * 100;
+
+    let r;
+    switch(m) {
+        case '+': r = _a + _b; break;
+        case '-': r = _a - _b; break;
+        case '*': r = _a * _b; break;
+        case '/': r = _a / _b; break;
+        default:
+            r = 0;
+    }
+    return r / 100;
+}
+
+function _calcEx() {
+    let params = [...arguments];
+    let res, m;
+    params.forEach(v => {
+        if(!res) res = v;
+        else if(!m) m = v;
+        else {
+            res = calc(res, m, v);
+            m = null;
+        }
+    });
+    return res;
+}
+
+export default {
 	showToast(opt){
 	    if(typeof opt != 'object'){
 	        opt = {
