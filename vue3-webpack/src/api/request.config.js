@@ -9,8 +9,8 @@ req.reqFilter((req) => {
 
 });
 
-req.resFilter((res, xhr) => {
-    return JSON.parse(xhr.responseText);
+req.resFilter((res, data) => {
+    return JSON.parse(data.response);
 });
 
 export default req;
