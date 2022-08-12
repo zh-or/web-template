@@ -30,6 +30,8 @@ module.exports = defineConfig({
                     /*steup 自动引入*/
                 ]
             }),
+            /*<script steup name="xxx" inheritAttrs="false">*/
+            require('unplugin-vue-setup-extend-plus/webpack')({ /* options */ }),
             /*require('unplugin-vue-components/webpack')({
                 //自动导入的目录:src/components
                 dirs: [],

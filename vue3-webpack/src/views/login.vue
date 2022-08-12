@@ -14,8 +14,8 @@
     </div>
 </template>
 <script setup name="login">
-
-
+    import TestName from '@/components/TestName';
+    console.log(TestName);
     console.log(process.env);
     const modal = $modal;
     let test = ref(0);
