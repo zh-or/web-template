@@ -3,7 +3,7 @@ export default function (url, service, req) {
 
     keys.forEach(k => {
         if (!service.hasOwnProperty(k)) {
-            service[k] = function (/*state, */data) {
+            service[k] = function (/*state, */data, uploadData) {
 
                 let val = url[k];
                 let tmp = val.split('|');
@@ -11,19 +11,28 @@ export default function (url, service, req) {
                     return req.get(val, data);
                 }
                 let m = tmp[0].toLocaleLowerCase();
+                let path = tmp[1];
+                //url/{params}
+                if(path.indexOf('{') && data) {
+                    Object.keys(data).forEach(k => {
+                        path = path.replace(`{${k}}`, data[k]);
+                    })
+                }
 
                 if (m === 'get') {
-                    return req.get(tmp[1], data);
+                    return req.get(path, data);
                 } else if (m === 'post') {
-                    return req.post(tmp[1], data);
+                    return req.post(path, data);
                 } else if (m === 'patch') {
-                    return req.patch(tmp[1], data);
+                    return req.patch(path, data);
+                } else if (m === 'put') {
+                    return req.put(path, data);
                 } else if (m === 'delete') {
-                    return req.delete(tmp[1], data);
+                    return req.delete(path, data);
                 } else if (m === 'upload') {
-                    return req.upload(tmp[1], data);
+                    return req.upload(path, data/*files | file*/, uploadData);
                 } else {
-                    console.log(tmp[1] + '\n暂不支持:' + tmp[0] + ', 只支持 get, post, patch 其他方法请自定义');
+                    console.log(path + '\n暂不支持:' + tmp[0] + ', 只支持 get, post, patch 其他方法请自定义');
                 }
                 return Promise.reject('不支持的请求方式');
             };

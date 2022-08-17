@@ -64,6 +64,18 @@ Request.prototype = {
             })
         });
     },
+    put(url, data, headers) {
+        return new Promise((resolve, reject) => {
+            this.request({
+                url: url,
+                method: 'PUT',
+                data: data,
+                headers: headers,
+                success: resolve,
+                error: reject
+            })
+        });
+    },
     patch(url, data, headers) {
         return new Promise((resolve, reject) => {
             this.request({
