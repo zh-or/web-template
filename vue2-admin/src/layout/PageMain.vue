@@ -1,9 +1,9 @@
 <template>
     <div class="main">
         <div class="menu-bar" :class="{'uncollapse': !$store.getters.isCollapse}">
-            <div class="logo-view txt-ellipsis">
-                <img src="@/assets/img/logo.png"/>
-                <span>雪炭商家管理平台</span>
+            <div class="logo-view txt-ellipsis" @click="$router.push('/index')">
+                <img v-if="$store.getters.isCollapse" src="@/assets/img/logo-menu.png" style="height: 60px"/>
+                <img v-else src="@/assets/img/logo-menu2.png" style="height: 32px;"/>
             </div>
             <el-scrollbar wrap-class="scrollbar-wrapper">
                 <MenuView/>
@@ -22,12 +22,18 @@
                     >
                         <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM142.4 642.1L298.7 519a8.84 8.84 0 0 0 0-13.9L142.4 381.9c-5.8-4.6-14.4-.5-14.4 6.9v246.3a8.9 8.9 0 0 0 14.4 7z"/>
                     </svg>
-                    <div class="paths">
+                    <!--<div class="paths">
                         <span @click="$router.push('/')">首页</span>
                         <template v-for="(item, i) in paths">
                             <span class="diff">/</span>
                             <span>{{item}}</span>
                         </template>
+                    </div>-->
+
+                    <div class="system-name">
+                        <span>你好,</span>
+                        <span class="name">商户XXXXX，</span>
+                        <span>欢迎使用雪碳商家管理平台！</span>
                     </div>
                 </div>
             </div>
@@ -81,14 +87,21 @@
         height: 100%;
 
         .menu-bar {
+            z-index: 2;
             flex-shrink: 0;
             -webkit-transition: width .28s;
             transition: width 0.28s;
             height: 100%;
-            background-color: $base-menu-background;
             color: $base-menu-color;
             width: $menu-collapse-width;
-            box-shadow: 2px 0 6px rgb(0, 21, 41, .35);
+            box-shadow: $base-menu-box-shadow;
+            background: $base-menu-background url("~@/assets/img/menu-bg.png") no-repeat left bottom;
+            background-size: 50% auto;
+
+            .el-submenu__title i {
+                /*图标*/
+                color: $base-menu-color;
+            }
 
             .menu-title {
                 display: none;
@@ -110,14 +123,25 @@
             }
 
             .el-menu {
-                background-color: $base-menu-background;
+                background-color: transparent;
                 border: 0;
 
                 .is-active {
+                    //color: $active-menu-color;
+                }
+
+                .el-menu-item.is-active {
                     color: $active-menu-color;
+                    background-color: $active-menu-bg;
                 }
             }
 
+
+            .el-menu-item:focus, .el-menu-item:hover, .el-submenu__title:hover {
+                //background-color: $hover-menu-bg !important;
+
+                color: $active-menu-color;
+            }
 
             .el-menu-item, .el-submenu__title {
                 color: $base-menu-color;
@@ -138,9 +162,6 @@
                 }
             }
 
-            .el-menu-item:focus, .el-menu-item:hover, .el-submenu__title:hover {
-                background-color: $hover-menu-bg !important;
-            }
 
             .logo-view {
                 height: $menu-logo-height;
@@ -148,12 +169,12 @@
                 align-items: center;
                 justify-content: center;
                 overflow: hidden;
+                cursor: pointer;
 
                 img {
-                    width: 32px;
-                    height: 32px;
+                    height: 60px;
                     vertical-align: middle;
-                    margin-right: 12px;
+                    //margin-right: 12px;
                 }
 
                 span {
@@ -184,13 +205,18 @@
         .main-wrap {
             height: 100%;
             flex-grow: 1;
+            display: flex;
+            flex-direction: column;
 
             .nav-bar {
-                height: 50px;
+                font-size: 18px;
+                background: #EFFEFF;
+                height: 70px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 box-shadow: 0 1px 4px rgb(0, 21, 41, .08);
+                flex-shrink: 0;
 
                 .left {
                     display: flex;
@@ -234,10 +260,25 @@
                         color: #a8abb2;
                     }
                 }
+
+                .system-name {
+                    color: #181D23;
+                    font-size: 18px;
+                    font-weight: 400;
+                    .name {
+                        color: #EE5E37;
+                    }
+                }
+            }
+
+
+            .tags-view-wrap {
+                flex-shrink: 0;
             }
 
             .main-page-wrap {
-
+                flex-grow: 1;
+                overflow-y: auto;
             }
         }
     }

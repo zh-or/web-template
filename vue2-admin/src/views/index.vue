@@ -1,5 +1,5 @@
 <template>
-    <div class="app-container home">
+    <div class="page page-home">
         <h3>雪炭商家管理平台</h3>
     </div>
 </template>

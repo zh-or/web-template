@@ -6,6 +6,7 @@ const getters = {
     },
     isCollapse: state => state.app.menuCollapse,
     menuList: state => state.app.menuList,
+    tags: state => state.app.tags,
 }
 
 export default getters;

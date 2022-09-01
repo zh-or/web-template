@@ -8,7 +8,7 @@
                 return this.$store.getters.menuList;
             },
             collapse() {
-                return this.$store.getters.menuCollapse;
+                return this.$store.getters.isCollapse;
             }
         },
         render(h) {
@@ -16,7 +16,7 @@
             let menu = h(Menu, {
                 props: {
                     router: true,
-                    collapse: this.collapse,
+                    collapse: !this.collapse,
                     uniqueOpened: true,
                     defaultActive: this.$route.fullPath,
                 }

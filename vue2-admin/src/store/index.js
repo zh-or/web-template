@@ -20,8 +20,23 @@ const store = new Vuex.Store({
                 permissions: [],
                 menuCollapse: true,
                 menuList: [],
+                tags: [],
             },
             actions: {
+                appendTag(store, val) {
+                    if(val.meta.hidden) {
+                        return;
+                    }
+                    if(!store.state.tags.find(_ => _.fullPath === val.fullPath)) {
+                        store.state.tags.push(val);
+                        console.log('add tag:', {...val});
+                    }
+                },
+                removeTag(store, val) {
+                    store.state.tags = store.state.tags.filter(_ => {
+                        return _.fullPath !== val.fullPath;
+                    })
+                },
                 setMenuCollapse(store, val) {
                     store.state.menuCollapse = val;
                 },

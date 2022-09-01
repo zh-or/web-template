@@ -3,6 +3,24 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
+
+const originalPush = VueRouter.prototype.push;
+const originalReplace = VueRouter.prototype.replace;
+
+// push
+VueRouter.prototype.push = function push(location, onResolve, onReject) {
+    if (onResolve || onReject)
+        return originalPush.call(this, location, onResolve, onReject);
+    return originalPush.call(this, location).catch(err => err);
+};
+
+//replace
+VueRouter.prototype.replace = function push(location, onResolve, onReject) {
+    if (onResolve || onReject)
+        return originalReplace.call(this, location, onResolve, onReject);
+    return originalReplace.call(this, location).catch(err => err);
+};
+
 import PageMain from '@/layout/PageMain.vue';
 import NoneRouter from '@/layout/NoneRouter.vue';
 
@@ -15,7 +33,7 @@ import NoneRouter from '@/layout/NoneRouter.vue';
         redirect: false, 面包屑是否可点击
         noTagesView: true, 是否在tagsview显示
         breadcrumb: true, 是否在面包屑显示
-        affix: false, 是否在tagsview中不可关闭
+        affix: false, 是否在tagsview中不可关闭 true时不可关闭
         title: '', 标题
         icon: '', 图标
     }
@@ -49,27 +67,27 @@ const routes = [
                 path: 'index',
                 component: () => import('@/views/index'),
                 name: 'Index',
-                meta: {title: '首页', icon: 'dashboard', affix: true}
+                meta: {title: '首页', icon: 'm-info', affix: true}
             }
         ]
     },
     {
         path: '/test',
         name: 'index-wrap',
-        meta: { title: 'test', icon: 'download'},
+        meta: { title: 'test', icon: 'm-info'},
         component: PageMain,
         children: [
             {
                 path: 'test1',
                 component: () => import('@/views/test1'),
-                name: 'Index',
-                meta: {title: 'test1', icon: 'dashboard', affix: true}
+                name: '测试1',
+                meta: {title: 'test1', icon: 'm-info'}
             },
             {
                 path: 'test2',
                 component: () => import('@/views/test2'),
                 name: 'test2',
-                meta: {title: 'test2', icon: 'dashboard', affix: true}
+                meta: {title: 'test2', icon: 'm-info'}
             }
         ]
     },

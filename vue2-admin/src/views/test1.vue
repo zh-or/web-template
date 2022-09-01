@@ -1,5 +1,8 @@
 <template>
-    <div>test1</div>
+    <div class="page">test1
+        <el-button type="primary">test</el-button>
+
+    </div>
 </template>
 
 <script setup>
