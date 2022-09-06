@@ -72,22 +72,80 @@ const routes = [
         ]
     },
     {
-        path: '/test',
-        name: 'index-wrap',
-        meta: { title: 'test', icon: 'm-info'},
+        path: '/base',
+        name: 'base',
+        meta: { title: '商家信息', icon: 'm-info'},
         component: PageMain,
         children: [
             {
-                path: 'test1',
-                component: () => import('@/views/test1'),
-                name: '测试1',
-                meta: {title: 'test1', icon: 'm-info'}
+                path: 'info',
+                component: () => import('@/views/base/info'),
+                name: 'enterprise1',
+                meta: {title: '商户基础信息', icon: 'm-info'}
             },
             {
-                path: 'test2',
-                component: () => import('@/views/test2'),
-                name: 'test2',
-                meta: {title: 'test2', icon: 'm-info'}
+                path: 'setting',
+                component: () => import('@/views/setting/setting'),
+                name: 'setting-view',
+                meta: {title: '设置', icon: 'm-info'}
+            },
+            {
+                path: 'areaTable',
+                component: () => import('@/views/setting/areaTable'),
+                name: 'area-table-view',
+                meta: {title: '区域桌台', icon: 'm-info'}
+            },
+            /*{
+                path: 'info2',
+                component: () => import('@/views/base/pay'),
+                name: 'enterprise2',
+                meta: {title: '商户支付信息', icon: 'dashboard'}
+            },*/
+        ]
+    },
+    {
+        path: '/goods',
+        name: 'goods',
+        meta: { title: '商品管理', icon: 'm-info'},
+        component: PageMain,
+        children: [
+            {
+                path: 'list',
+                component: () => import('@/views/goods/list'),
+                name: 'goods-list',
+                meta: {title: '商品列表', noCache: true, icon: 'm-info'}
+            },
+            {
+                path: 'group',
+                component: () => import('@/views/goods/group'),
+                name: 'goods-group',
+                meta: {title: '商品分组', icon: 'm-info'}
+            },
+            {
+                path: 'edit',
+                component: () => import('@/views/goods/edit'),
+                name: 'goods-add',
+                hidden: true,
+                breadcrumb: false,
+                meta: {title: '编辑商品', noCache: true, noTagesView: true, icon: 'm-info'}
+            },
+            {
+                path: 'brand',
+                component: () => import('@/views/goods/brand'),
+                name: 'goods-brand',
+                meta: {title: '品牌管理', icon: 'm-info'}
+            },
+            {
+                path: 'unit',
+                component: () => import('@/views/goods/unit'),
+                name: 'goods-unit',
+                meta: {title: '单位管理', icon: 'm-info'}
+            },
+            {
+                path: 'specs',
+                component: () => import('@/views/goods/specs'),
+                name: 'goods-specs',
+                meta: {title: '规格管理', icon: 'm-info'}
             }
         ]
     },

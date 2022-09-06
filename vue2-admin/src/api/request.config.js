@@ -17,6 +17,23 @@ req.reqFilter((req) => {
         req.headers.Authorization = 'Bearer ' + token;
     }
     req.headers['Tenant-Code'] = process.env.VUE_APP_Tenant_Code;
+
+    let data = {...req.data};
+
+    Object.keys(data).forEach(k => {
+        if(data[k] === '' || data[k] === null) {
+            delete data[k]
+        }
+    });
+    req.data = data;
+
+    let url = req.url;
+    if(url.indexOf('{') != -1) {
+        Object.keys(req.data).forEach(k => {
+            url = url.replaceAll(`{${k}}`, req.data[k]);
+        });
+        req.url = url;
+    }
 });
 
 const errObj = {

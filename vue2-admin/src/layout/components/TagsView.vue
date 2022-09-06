@@ -9,7 +9,7 @@
                      @click="goRouter(tag)">
                     <span>{{tag.meta.title}}</span>
                     <span v-if="tags.length > 1 && !tag.meta.affix" @click.prev="closeTag(tag)">
-                    <svg-icon name="icon_cancel" />
+                    <svg-icon name="cancel" />
                 </span>
                 </div>
             </div>

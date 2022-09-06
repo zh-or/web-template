@@ -24,7 +24,7 @@ const store = new Vuex.Store({
             },
             actions: {
                 appendTag(store, val) {
-                    if(val.meta.hidden) {
+                    if(val.meta.hidden || val.meta.noTagesView === true) {
                         return;
                     }
                     if(!store.state.tags.find(_ => _.fullPath === val.fullPath)) {

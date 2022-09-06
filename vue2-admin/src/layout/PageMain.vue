@@ -274,6 +274,10 @@
 
             .tags-view-wrap {
                 flex-shrink: 0;
+
+                .el-scrollbar__view {
+                    padding-bottom: 10px;
+                }
             }
 
             .main-page-wrap {
