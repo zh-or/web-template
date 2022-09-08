@@ -125,6 +125,32 @@ module.exports = {
                 symbolId: 'icon-[name]'
             })
             .end();
+
+        //打包优化
+        config.optimization.splitChunks({
+            chunks: 'all',
+            cacheGroups: {
+                libs: {
+                    name: 'chunk-libs',
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: 10,
+                    chunks: 'initial' // only package third parties that are initially dependent
+                },
+                elementUI: {
+                    name: 'chunk-elementUI', // split elementUI into a single package
+                    priority: 20, // the weight needs to be larger than libs and app or it will be packaged into libs or app
+                    test: /[\\/]node_modules[\\/]_?element-ui(.*)/ // in order to adapt to cnpm
+                },
+                commons: {
+                    name: 'chunk-commons',
+                    test: resolve('src/components'), // can customize your rules
+                    minChunks: 3, //  minimum common number
+                    priority: 5,
+                    reuseExistingChunk: true
+                }
+            }
+        })
+
         /*坑1: https://github.com/vuejs/vue-cli/issues/1669
         * are you using the pages feature? In that case,
         * there are multiple instance of the webpack plugin (one for each page) and they are named like 'html-nameOfThePage'.
