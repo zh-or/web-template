@@ -1,12 +1,24 @@
-import order from './vals/order';
-import goods from './vals/goods';
-import accountBook from './vals/accountBook';
+import t from 'lib';
 
 const enums = {
-    ...order,
-    ...goods,
-    ...accountBook,
+
 }
+
+const req = require.context('./vals', false, /\.js/);
+const requireAll = requireContext => {
+    requireContext.keys().map(path => {
+        let e = requireContext(path).default;
+        Object.keys(e).forEach(k => {
+            if(enums.hasOwnProperty(k)) {
+                console.error('枚举值重复:', k, e[k]);
+            } else {
+                enums[k] = e[k];
+            }
+        })
+    });
+    //console.log(url)
+};
+requireAll(req);
 
 export function getEnumArr(type, opt) {
     opt = opt || {
@@ -18,7 +30,7 @@ export function getEnumArr(type, opt) {
     opt.value = opt.value || 'value';
     opt.filter = opt.filter || [];
     let arr = [];
-    let obj = enums[type];
+    let obj = t.ObjGet(enums, type);
     if(obj) {
         Object.keys(obj).forEach(k => {
             if(opt.filter.indexOf(Number(k)) != -1) {
@@ -35,7 +47,7 @@ export function getEnumArr(type, opt) {
 
 export function getEnum(type, key) {
     let str = '';
-    let obj = enums[type];
+    let obj = t.ObjGet(enums, type);
     if(obj && obj.hasOwnProperty(key)) {
         str = obj[key];
     }
@@ -45,10 +57,14 @@ export function getEnum(type, key) {
 export default {
     props: {
         type: String,
-        state: Number
+        state: Number,
+        tag: {
+            type: String,
+            default: 'span'
+        },
     },
     render() {
         let str = getEnum(this.type, this.state);
-        return h('span', {}, str);
+        return h(this.tag, {}, str);
     }
 }

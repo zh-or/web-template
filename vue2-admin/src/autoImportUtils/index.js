@@ -1,7 +1,7 @@
 import t from 'lib';
 import notify from 'lib/notify';
 
-import modal from '../plugins/modal';
+import modal from '../utils/modal';
 import api from '../api/api';
 import store from '../store';
 import router from '../router/index.js';
@@ -13,29 +13,6 @@ export const $api = api;
 export const $notify = notify;
 export const $store = store;
 export const $router = router;
-
-
-export function getImgUrl(type, param) {
-    let base = process.env.VUE_APP_BASE_API;
-    let code = process.env.VUE_APP_Tenant_Code;
-    switch(type) {
-        case 'brand':
-            return base + `/merchant/goods-brand/download-files/${param}?tenantCode=${code}`;
-        case 'group':
-            return base + `/merchant/goods-group/download-files/${param}?tenantCode=${code}`;
-        case 'goods':
-            return base + `/merchant/goods-base/download-files/${param}?tenantCode=${code}`;
-        case 'merchant':
-            return base + `/buss/merchant-info/download-files/${param}?tenantCode=${code}`;
-        case 'editor':
-            return base + `/buss/rich-text-files/download-files/${param}?tenantCode=${code}`;
-        case 'file':
-            return base + `/buss/file/download-files?filePath=${param}&tenantCode=${code}`;
-        default:
-            console.error('未知的图片类型');
-            return '';
-    }
-}
 
 import {Loading} from 'element-ui';
 import {get} from '@/utils/xhr.js';

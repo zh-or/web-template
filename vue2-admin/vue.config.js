@@ -22,8 +22,7 @@ module.exports = defineConfig({
                 resolvers: [/*ElementPlusResolver()*/],
                 dts: false,
                 dirs: [
-                    /*router死活引入不了*/
-                    /*resolve('./src/autoImportUtils')*/
+                    resolve('./src/autoImportUtils')
                     /*setup 自动引入*/
                 ]
             }),
