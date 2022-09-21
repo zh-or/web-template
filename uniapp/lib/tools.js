@@ -39,6 +39,7 @@ export default {
 	    uni.showToast(opt);
 	},
 	showWait (opt) {
+        opt = opt || '';
 	    if(typeof opt != 'object'){
 	        opt = {
 	            title: opt,
@@ -86,7 +87,7 @@ export default {
 	            }
 	            return formatStr;
 	        } catch (e) {
-	
+
 	        }
 	        return '';
 	    }
