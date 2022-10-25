@@ -66,6 +66,14 @@ module.exports = defineConfig({
     transpileDependencies: false,
     productionSourceMap: false,
 
+    /*css: {
+        loaderOptions: {
+            less: {
+                additionalData: `@import "@/assets/css/var.less";`
+            },
+        }
+    },*/
+
     publicPath: isProduction ? './' : '/',
     assetsDir: assetsDir,
     outputDir: outDir,

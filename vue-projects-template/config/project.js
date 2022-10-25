@@ -1,1 +1,1 @@
-exports.projectName = 'test'
+exports.projectName = ''
