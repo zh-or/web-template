@@ -34,6 +34,15 @@ export default {
         } else {
             obj = opt;
         }
+        obj.fail = function(e) {
+            console.error('router.push', e);
+        }
+
+        if(this.paths.length > 0 && this.paths[0] === obj.url) {
+            obj.fail('重复跳转:' + obj.url);
+            return;
+        }
+
         this.paths.push(obj.url);
 		// console.log(obj);
         uni.navigateTo(obj);
@@ -49,7 +58,12 @@ export default {
         } else {
             this.paths.push(url);
         }
-        uni.redirectTo({url: url});
+        uni.redirectTo({
+            url: url,
+            fail : function(e) {
+                console.error('router.replace', e);
+            }
+        });
     },
     /**
      * 后退
@@ -75,6 +89,9 @@ export default {
         this.paths = [];
         uni.switchTab({
             url: path,
+            fail : function(e) {
+                console.error('router.switchTab', e);
+            }
         });
     },
     /**
@@ -83,7 +100,10 @@ export default {
     reLaunch(path) {
         this.paths = [];
         uni.reLaunch({
-            url: path
+            url: path,
+            fail : function(e) {
+                console.error('router.reLaunch', e);
+            }
         });
     }
 }
