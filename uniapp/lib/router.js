@@ -3,6 +3,13 @@ export default {
     animation: 'none',
     resultSuccess: null,
     resultError: null,
+    currentPage() {
+        let pages = getCurrentPages();
+        if(pages.length > 0) {
+            return '/' + pages[pages.length - 1].route;
+        }
+        return '';
+    },
     pushForResult(opt) {
         return new Promise((resolve, reject) => {
             this.resultSuccess = resolve;
@@ -25,7 +32,6 @@ export default {
      * @param opt
      */
     push(opt) {
-        // console.log('push', opt);
         let obj = {
             animationType: this.animation
         };
@@ -37,13 +43,21 @@ export default {
         obj.fail = function(e) {
             console.error('router.push', e);
         }
-
-        if(this.paths.length > 0 && this.paths[0] === obj.url) {
+        if(this.currentPage() === obj.url) {
             obj.fail('重复跳转:' + obj.url);
             return;
         }
 
         this.paths.push(obj.url);
+
+/*
+        console.log(
+            this.currentPage(),
+            obj.url,
+            this.currentPage() === obj.url,
+            this.paths
+        );*/
+
 		// console.log(obj);
         uni.navigateTo(obj);
     },
@@ -73,9 +87,7 @@ export default {
         delta = delta || 1;
         let max = this.paths.length - 1 - delta;
         max = max < 0 ? 0 : max;
-        this.paths = this.paths.filter((item, index) => {
-            return index <= max;
-        });
+        this.paths = this.paths.splice(0, max);
         uni.navigateBack({
             delta: delta,
             animationType: this.animation
@@ -86,19 +98,19 @@ export default {
      * @param path 需要跳转的 tabBar 页面的路径（需在 pages.json 的 tabBar 字段定义的页面），路径后不能带参数
      */
     switchTab(path) {
-        this.paths = [];
+        this.paths = [path];
         uni.switchTab({
             url: path,
             fail : function(e) {
-                console.error('router.switchTab', e);
-            }
+            console.error('router.switchTab', e);
+        }
         });
     },
     /**
      * 关闭所有页面，打开到应用内的某个页面。
      */
     reLaunch(path) {
-        this.paths = [];
+        this.paths = [path];
         uni.reLaunch({
             url: path,
             fail : function(e) {
