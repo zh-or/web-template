@@ -11,11 +11,8 @@ function resolve(dir) {
     return path.join(__dirname, dir)
 }
 
-function reqPage(dir, name) {
-
-}
-
-function mergePage(from, name) {
+function mergePage(from, name, chunksName) {
+    chunksName = chunksName || name;
     let tmpPath = `'public/${name}.html'`;
     if(!fs.existsSync(tmpPath)) {
         tmpPath = 'public/index.html';
@@ -26,7 +23,7 @@ function mergePage(from, name) {
         favicon: 'public/favicon.ico',
         filename: `${name}.html`,
         title: '未设置标题',
-        chunks: ['chunk-vendors', 'chunk-common', 'index'],
+        chunks: ['chunk-vendors', 'chunk-common', chunksName],//这里要和下面 149 行匹配, 所以打包一个项目时这里用 index
     }, from.page);
 }
 
@@ -45,10 +42,10 @@ if(projectName && projectName != '') {
     let config  = require(`./src/projects/${projectName}/config.js`);
     outDir      = config.outDir || `./dist/${projectName}`;
     assetsDir   = config.assetsDir || assetsDir;
-    tmpPage.index = mergePage(config, projectName);
+    tmpPage.index = mergePage(config, projectName, 'index');//fix bug
     console.log(`编译项目: ${projectName}, 页面标题: ${tmpPage.index.title}...`);
 } else {
-    console.log(`编译项目: ${projectName} ...`);
+    console.log(`编译全部项目 ...`);
     let dirs = fs.readdirSync('./src/projects/');
     dirs.forEach((dir) => {
         let config = require(`./src/projects/${dir}/config.js`);
@@ -130,16 +127,20 @@ module.exports = defineConfig({
         * npx vue-cli-service inspect --plugins
         * */
 
-        let addArgs = (name) => {
+        let addArgs = (name, pars) => {
+            pars = pars || {};
+
             config.plugin(name ? 'html-' + name : 'html').tap(args  => {
                 let newArgs = [].concat(args || []);
                 if(newArgs.length > 0){
                     newArgs[0].isProduction = isProduction;
                     newArgs[0].useCND = isProduction;
+                    newArgs[0].pars = pars;
                 } else {
                     newArgs.push({
                         isProduction: isProduction,
-                        useCND: isProduction
+                        useCND: isProduction,
+                        pars: pars,
                     })
                 }
                 //console.log('-------------', args, '-------------');
@@ -150,11 +151,11 @@ module.exports = defineConfig({
 
         if(projectName) {
             //default page name is index
-            addArgs('index');
+            addArgs('index', tmpPage.index.html);
             config.resolve.alias.set(`@${projectName}`, resolve(`src/projects/${projectName}`));
         } else {
             Object.keys(tmpPage).forEach(dir => {
-                addArgs(dir);
+                addArgs(dir, tmpPage[dir].html);
                 config.resolve.alias.set(`@${dir}`, resolve(`src/projects/${dir}`));
             });
         }
@@ -170,8 +171,8 @@ module.exports = defineConfig({
         }
     },
 
-    devServer: {
+    /*devServer: {
         disableHostCheck: true,//外网反向代理 Invalid Host header 问题
         progress: false,
-    },
+    },*/
 });

@@ -1,11 +1,16 @@
 {
-  "name": "lib",
+  "name": "@zh-or/lib",
   "version": "1.0.0",
   "description": "libs",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": ["xhr", "request", "helper", "signal", "wait", "notify", "promise", "timeout"],
   "author": "yangfan",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+      "type": "git",
+      "url": "https://github.com/zh-or/web-template"
+    }
 }
