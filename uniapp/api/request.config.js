@@ -28,6 +28,12 @@ req.reqFilter((req) => {
     } else {
         req.url = req.url + '?token=' + store.getters.token;
     }
+    //统一移除空值
+    Object.keys(req.data).forEach(k => {
+        if(req.data[k] === '' || req.data[k] === null || req.data[k] === undefined) {
+            delete req.data[k];
+        }
+    });
 });
 
 req.resFilter((res, xhr) => {

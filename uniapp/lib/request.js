@@ -100,13 +100,13 @@ Request.prototype = {
             })
         });
     },
-    upload(url, file, data, headers) {
+    upload(url, data, headers) {
         return new Promise((resolve, reject) => {
             this.request({
                 url: url,
                 method: 'UPLOAD',
-                data: data,
-                file: file,
+                data: data.formData || {},
+                file: data.file,
                 headers: headers,
                 success: resolve,
                 error: reject
@@ -173,6 +173,7 @@ Request.prototype = {
                 uni.uploadFile({
                     'url': self.host + arg.url,
                     'formData': arg.data,
+                    //小程序不支持 files 只能单个文件上传
                     'files': fs, //需要上传的文件列表。使用 files 时，filePath 和 name 不生效
                     'filePath': arg.file.path,
                     'name': arg.file.name,
