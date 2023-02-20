@@ -56,7 +56,7 @@ export default {
         })
     },
     toFixed(num, f) {//四舍五入
-       return new decimal(num).toFixed(f || 2, decimal.ROUND_HALF_EVEN);
+       return new decimal(num).toFixed(f || 2, decimal.ROUND_DOWN);
     },
     getDecima() {
         return decimal;
@@ -382,4 +382,34 @@ export default {
         start.setMilliseconds(0);
         return [start, now];
     },
+    // 腾讯转百度
+    change (lat, lng) {
+        var x_pi = (3.14159265358979324 * 3000.0) / 180.0;
+        var x = parseFloat(lng);
+        var y = parseFloat(lat);
+        var z = Math.sqrt(x * x + y * y) + 0.00002 * Math.sin(y * x_pi);
+        var theta = Math.atan2(y, x) + 0.000003 * Math.cos(x * x_pi);
+        lng = z * Math.cos(theta) + 0.0065;
+        lat = z * Math.sin(theta) + 0.006;
+        return { lng, lat };
+    },
+// 百度转腾讯
+    changeToTx(lat, lng) {
+        if (!lng || !lat) return {
+            lng: 0,
+            lat: 0
+        }
+        let x_pi = (3.14159265358979324 * 3000.0) / 180.0;
+        let x = lng - 0.0065;
+        let y = lat - 0.006;
+        let z = Math.sqrt(x * x + y * y) - 0.00002 * Math.sin(y * x_pi);
+        let theta = Math.atan2(y, x) - 0.000003 * Math.cos(x * x_pi);
+        let lngs = z * Math.cos(theta);
+        let lats = z * Math.sin(theta);
+        return {
+            lng: lngs,
+            lat: lats
+        };
+    }
+
 }
