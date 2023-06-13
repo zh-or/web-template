@@ -151,7 +151,7 @@ var validation = {
         }
         return true;
     },
-    showTips : function(self, tips){
+    showTips : function(self, tips) {
         console.log('showTips', self, tips);
         self.tip.el.innerText = tips.input;
         self.tip.el.style.display = 'inline-block';
