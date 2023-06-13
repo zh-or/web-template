@@ -8,6 +8,7 @@ let path = require('path');
 let fs = require('fs');
 
 const devMode = process.env.NODE_ENV !== "production";
+const SERVER_PORT = 9000;
 
 function resolve(dir) {
     return path.join(__dirname, dir)
@@ -51,7 +52,8 @@ module.exports= (env, argv) => {
         * */
         BASE_URL: JSON.stringify("/"),
         env: JSON.stringify({
-            mode: argv.mode
+            mode: argv.mode,
+            name: 'ad - '
         })
     }));
 
@@ -88,6 +90,11 @@ module.exports= (env, argv) => {
                 new CssMinimizerPlugin(),
             ],
         },
+        resolve: {
+            alias: {
+                '@': resolve('src/'),
+            },
+        },
         module: {
             rules: [
                 {
@@ -114,13 +121,18 @@ module.exports= (env, argv) => {
                             loader: 'css-loader'
                         },
                         'postcss-loader',
-                        'less-loader',
+                        {
+                            loader: 'less-loader',
+                            options: {
+                                additionalData: '@import "@/assets/style/var.less";',
+                            }
+                        },
                     ],
                 },
             ]
         },
         devServer: {
-            port: 9000,
+            port: SERVER_PORT,
         },
     };
 }
