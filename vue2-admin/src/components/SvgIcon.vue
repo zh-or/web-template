@@ -1,11 +1,11 @@
 <template>
-    <div v-if="isExternal" :style="styleExternalIcon" class="svg-external-icon svg-icon" v-on="$attrs"/>
-    <svg v-else :class="svgClass" aria-hidden="true" v-on="$attrs">
+    <div v-if="isExternal" :style="styleExternalIcon" class="svg-external-icon svg-icon" v-on="$listeners"/>
+    <svg v-else :class="svgClass" aria-hidden="true" v-on="$listeners">
         <use :href="iconName"/>
     </svg>
 </template>
 
-<script >
+<script>
 
     export default {
         name: 'SvgIcon',
@@ -51,7 +51,6 @@
         fill: currentColor;
         overflow: hidden;
         margin: auto 3px;
-        transition: all 200ms;
     }
 
     .svg-external-icon {

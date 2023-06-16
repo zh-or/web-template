@@ -1,0 +1,34 @@
+//互补色
+@colorBase: #00ACB5;
+@colorBaseCp: spin(@colorBase, 180);
+@colorBaseCp2: spin(@colorBase, 250);
+
+//三元色
+@colorBase2: spin(@colorBase, -(360 / 3));
+@colorBase3: spin(@colorBase, (360 / 3));
+
+//亮, 暗
+@colorHover: lighten(@colorBase, 10%);
+@colorFocus: darken(@colorBase, 10%);
+
+//饱和度
+//@colorHover1: saturate(@colorBase, 10%);
+//@colorFocus1: desaturate(@colorBase, 10%);
+//@colorDisabled: lightness(desaturate(@colorBase, 100%), 30%);
+//@colorDisabled: desaturate(@colorBase, lightness(@colorBase));
+
+@colorPrimary: @colorBase;
+@colorSuccess: #67C23A;
+@colorWarning: #E6A23C;
+@colorDanger: #F56C6C;
+@colorInfo: #909399;
+
+@colorTxt0: #172133;
+@colorTxt1: #303133;
+@colorTxt2: #606266;
+@colorTxt3: #909399;
+@colorTxt4: #C0C4CC;
+
+
+@headerHeight: 50px;
+@contentWidth: 1280px;

@@ -1,6 +1,8 @@
 import request from '@zh-or/lib/request';
 import {getHost} from "./link";
-import modal from '@/plugins/modal.js';
+import store from '../store.js';
+import router from '../router.js';
+import modal from '@/lib/modal.js';
 
 let req = new request({
     host: getHost(),
