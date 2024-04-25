@@ -53,7 +53,7 @@
     height: 100%;
     width: 100%;
     z-index: 201412268;
-    transition: opacity 200s linear;
+    transition: opacity .2s linear;
     opacity: 0;
     background-color: #000;
 }
