@@ -12,6 +12,7 @@ function _calc(a, m, b) {
         case '-': r = _a - _b; break;
         case '*': r = _a * _b; break;
         case '/': r = _a / _b; break;
+        case '%': r = _a.mod(_b); break;
         default:
             r = 0;
     }
@@ -56,7 +57,10 @@ export default {
         })
     },
     toFixed(num, f) {//四舍五入
-       return new decimal(num).toFixed(f || 2, decimal.ROUND_DOWN);
+        return new decimal(num).toFixed(f || 2, decimal.ROUND_DOWN);
+    },
+    toFixedUP(num, f) {//四舍五入
+        return new decimal(num).toFixed(f || 2, decimal.ROUND_UP);
     },
     getDecima() {
         return decimal;
@@ -72,6 +76,22 @@ export default {
         let p2 = this.Number(p);
         p2 = p2.toFixed(fix);
         return p2;
+    },
+    formatWeek(str) {
+
+        let week = '周日,周一,周二,周三,周四,周五,周六'.split(',');
+        let date = this.parseDate(str);
+        let w = week[date.getDay()];
+        //不考虑月, 年差
+        let s = date.getDate() - new Date().getDate();
+        if(s === 0) {
+            w = '今天';
+        } else if(s === 1) {
+            w = '明天';
+        } else if(s === 2) {
+            w = '后天';
+        }
+        return w;
     },
     Number(v, def) {
         try {
@@ -96,6 +116,7 @@ export default {
             case '-': r = da.sub(db); break;
             case '*': r = da.mul(db); break;
             case '/': r = da.div(db); break;
+            case '%': r = da.mod(db); break;
             default:
                 r = new decimal(0);
         }
@@ -108,10 +129,10 @@ export default {
     },
     calcEx() {
         let params = [...arguments];
-        let res, m;
+        let res = null, m = null;
         params.forEach(v => {
-            if(!res) res = v;
-            else if(!m) m = v;
+            if(res === null) res = v;
+            else if(m === null) m = v;
             else {
                 res = this.calc(res, m, v);
                 m = null;
@@ -123,6 +144,26 @@ export default {
         let t = this.id;
         this.id++;
         return 'i_' + t;
+    },
+    showInfo(title, content) {
+        return this.showConfirm(title, content, false);
+    },
+    showConfirm(title, content, cancel) {
+        cancel = cancel === undefined ? true : cancel;
+        return new Promise((resolve, reject) => {
+            uni.showModal({
+                title: title || '',
+                content: content || '',
+                showCancel: cancel,
+                success:  (res) => {
+                    if (res.confirm) {
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                }
+            })
+        })
     },
     oldTimer: null,
     showToast(opt) {
@@ -143,16 +184,22 @@ export default {
             uni.showToast(opt);
         }, 100);
         return new Promise((resolve, reject) => {
-            clearTimeout(this.oldTimer);
-            this.oldTimer = setTimeout(resolve, opt.duration);
+
+            setTimeout(resolve, opt.duration);
         })
     },
+    showWaitM(title) {
+        this.showWait({
+            mask: true,
+            title : title || ''
+        })
+    } ,
     showWait(opt) {
         opt = opt || '';
         if (typeof opt != 'object') {
             opt = {
                 title: opt || '',
-                mask: true
+                mask: false
             }
         }
         uni.showLoading(opt);
@@ -170,12 +217,16 @@ export default {
         }
     },
     clone(from, to, lvl) {
+        if(!from) {
+            console.log('from is null:', from);
+            return;
+        }
         //根据to对象的字段来复制
         if (lvl && lvl <= 0) return false;
         let keys = Object.keys(to);
         let val, type;
         keys.forEach(k => {
-            if(!from || !from.hasOwnProperty(k)) {
+            if(!from || !Object.prototype.hasOwnProperty.call(from, k)) {
                 return;
             }
             val = to[k];
@@ -226,38 +277,78 @@ export default {
         }
         return o
     },
+    getWeek(date) {
+        let weeks = '周日,周一,周二,周三,周四,周五,周六'.split(',');
+        date = this.parseDate(date);
+        if(date) {
+            return weeks[date.getDay()];
+        }
+        return '';
+    },
     parseDate(date) {
-        if (!date) {
-            return null;
+        let parse = (par) => {
+            if (!date) {
+                return null;
+            }
+            if (typeof date === 'object') {//date 对象
+                return date;
+            }
+            if (typeof date === 'string') {
+                //yyyy-MM-dd hh:mm:ss -> yyyy-MM-ddThh:mm:ss
+                //date = date.replace(' ', 'T');
+                //return new Date(Date.parse(date));
+                //有时区问题
+
+                let times = Date.parse(date);
+                if(isNaN(times)) {
+                    console.error('格式化时间有问题1:', date, times);
+                    //2023-06-14T01:59:30.000Z
+                    let tmp = date;
+                    //tmp = tmp.replace(' ', 'T') + '.000Z';//iso时间格式 Z表示无时区 即时区为 +00:00
+                    tmp = tmp.replace(' ', 'T') + '+08:00';//iso时间格式
+                    times = Date.parse(tmp);
+
+                    if(isNaN(times)) {
+                        console.error('格式化时间有问题2:', date, times);
+                        tmp = date;
+                        tmp = tmp.replace(/-/g, '/');
+                        times = Date.parse(tmp);
+
+                        if(isNaN(times)) {
+                            console.error('格式化时间有问题3:', date, times);
+                        }
+                    } else {//时区-8小时
+                        times = times - 8 * 60 * 60 * 1000;
+                    }
+
+                }
+                return new Date(times);
+            }
+            if (typeof date === 'number') {//时间戳
+                let t = new Date();
+                t.setTime(date);
+                return t;
+            }
         }
-        if (typeof date == 'object') {//date 对象
-            return date;
-        }
-        if (typeof date == 'string') {
-            //yyyy-MM-dd hh:mm:ss -> yyyy-MM-ddThh:mm:ss
-            date = date.replace(' ', 'T');
-            return new Date(Date.parse(date));
-        }
-        if (typeof date == 'number') {//时间戳
-            let t = new Date();
-            t.setTime(date);
-            return t;
-        }
-        return null;
+        //debugger
+        let tmp = parse(date);
+        /*if(tmp) {
+            let t = tmp.toString();
+            tmp.setMinutes(tmp.getMinutes() + tmp.getTimezoneOffset());
+            tmp.setHours(tmp.getHours() + 8);//utc+8 北京时间
+
+            console.log(date, t, '---', tmp);
+        }*/
+        return tmp;
     },
     formatDate(date, formatStr) {
         try {
             if (!date) {
                 return '';
             }
-            if (typeof date == 'string') {
-                date = new Date(Date.parse(date));
-            }
-            if (typeof date == 'number') {
-                let t = new Date();
-                t.setTime(date);
-                date = t;
-            }
+            date = this.parseDate(date);
+
+
             formatStr = formatStr || 'yyyy-MM-dd hh:mm:ss';
             let obj = {
                 'M+': date.getMonth() + 1,
@@ -314,11 +405,18 @@ export default {
         return raw;
     },
     getQueryString(str, name) {
-        var result = str.match(new RegExp("[\?\&]" + name + "=([^\&]+)", "i"));
+        var result = str.match(new RegExp("[\?\&]" + name + "=([^\&\#]+)", "i"));
         if (result == null || result.length < 1) {
             return "";
         }
         return result[1];
+    },
+    objToQueryString(obj) {
+        let res = [];
+        Object.keys(obj).forEach(k => {
+            res.push(k + '=' + encodeURIComponent(obj[k]));
+        });
+        return res.join('&');
     },
     randomNum(minNum, maxNum) {
         switch (arguments.length) {
@@ -342,6 +440,16 @@ export default {
         } catch (e) {
         }
         return def;
+    },
+    getDataAndRemove(key, def) {
+        let v = this.getData(key, def);
+        uni.removeStorage({
+            key: key,
+            success: function (res) {
+                console.log('移除缓存:', key);
+            }
+        });
+        return v;
     },
     getDiffDay(type) {
         let now = new Date();
@@ -410,6 +518,53 @@ export default {
             lng: lngs,
             lat: lats
         };
-    }
+    },
 
+
+    fixMovieItemInfo(item) {
+        let version = (item.version || '').split(' ');
+        item.v1 = version[0];
+        item.v2 = version[1];
+
+        item.wish = this.trannumber(item.wish);
+        item.sc = item.sc.toFixed(1);
+        item.cat = (item.cat || '').replaceAll('|', ' ');
+    },
+
+    trannumber (num) {
+        if (num) {
+            let numStr = num.toString()
+            let rusult = ''
+            // 千以内直接返回
+            if (numStr.length <= 4) {
+                return numStr;
+            }
+            //大于8位数是亿
+            else if (numStr.length > 8) {
+                let decimal = numStr.substring(numStr.length - 8);
+                rusult = parseFloat(Number(num / 100000000).toFixed(2) + '.' + decimal) + '亿';
+            }
+            //大于6位数是十万 (以10W分割 10W以下全部显示)
+            else if (numStr.length > 4) {
+                let decimal = numStr.substring(numStr.length - 4)
+                rusult = parseFloat(Number(num / 10000).toFixed(1) + '.' + decimal) + '万';
+            }
+            return rusult
+        }
+    },
+
+    getVer() {
+        try{
+            //#ifdef MP-WEIXIN
+            let o1 = wx.getAccountInfoSync().miniProgram;
+            return o1.version || o1.envVersion;
+            //#endif
+            //#ifdef MP-ALIPAY
+            let o2 = my.getAccountInfoSync().miniProgram;
+            return o2.version || o2.envVersion;
+            //#endif
+        } catch(e) {
+            console.error('获取小程序版本出错:', e);
+        }
+    }
 }

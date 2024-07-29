@@ -1,4 +1,4 @@
-const TIMEOUT = 20 * 1000;
+const TIMEOUT = 60 * 1000 * 5;
 
 function defaultSuccessFun(res) {
     console.log(res);
@@ -61,6 +61,19 @@ Request.prototype = {
                 headers: headers,
                 success: resolve,
                 error: reject,
+            })
+        });
+    },
+    postUrl(url, data, headers) {
+        return new Promise((resolve, reject) => {
+            this.request({
+                url: url,
+                method: 'POST',
+                data: data,
+                headers: headers,
+                success: resolve,
+                error: reject,
+                formatUrlencode: true
             })
         });
     },
@@ -181,6 +194,7 @@ Request.prototype = {
                     'timeout': arg.timeout,
                     'success': successFun,
                     'fail': function (e) {
+                        e = e || {};
                         let isHold = false;
                         self.errorFilter.forEach(f => {
                             if (f.call(self, e)) {
