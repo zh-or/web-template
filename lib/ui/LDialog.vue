@@ -108,8 +108,15 @@
 </script>
 
 <style lang="less">
-    @import "~@base/assets/style/transition.less";
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.3s ease;
+}
 
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
+}
     .l-dialog {
         height: 100%;
         width: 100%;

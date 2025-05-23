@@ -69,17 +69,18 @@
         .mb-title {
             font-size: 14px;
             font-weight: bold;
-            color: @colorTxt1;
+            color: #303133;
         }
 
         .mb-content {
             margin: 20px 0;
             font-size: 14px;
-            color: @colorTxt0;
+            color: #606266;
             min-height: 2em;
             max-width: 400px;
             line-height: 1.6em;
             font-weight: bold;
+            letter-spacing: 2px;
         }
 
         .mb-btns {
