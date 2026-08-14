@@ -1,0 +1,9 @@
+
+### test
+POST http://localhost:9999/a/pv/123
+Content-Type: application/json
+
+{
+    "b": ["1", "a", "啊"]
+}
+

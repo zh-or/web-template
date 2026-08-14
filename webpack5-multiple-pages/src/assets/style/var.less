@@ -3,7 +3,7 @@
 */
 
 //互补色
-@colorBase: #409EFF;
+@colorBase: #4285F4;
 @colorBaseCp: spin(@colorBase, 180);
 
 //三元色
@@ -14,6 +14,13 @@
 @colorHover: lighten(@colorBase, 10%);
 @colorFocus: darken(@colorBase, 10%);
 
+@colorBaseH10: lighten(@colorBase, 10%);
+@colorBaseL10: darken(@colorBase, 10%);
+@colorBaseH20: lighten(@colorBase, 20%);
+@colorBaseL20: darken(@colorBase, 20%);
+@colorBaseH30: lighten(@colorBase, 30%);
+@colorBaseL30: darken(@colorBase, 30%);
+
 //饱和度
 //@colorHover1: saturate(@colorBase, 10%);
 //@colorFocus1: desaturate(@colorBase, 10%);
@@ -21,9 +28,9 @@
 //@colorDisabled: desaturate(@colorBase, lightness(@colorBase));
 
 @colorPrimary: @colorBase;
-@colorSuccess: #67C23A;
-@colorWarning: #E6A23C;
-@colorDanger: #F56C6C;
+@colorSuccess: #52c41a;
+@colorWarning: #faad14;
+@colorDanger: #f5222d;
 @colorInfo: #909399;
 
 @colorTxt0: #172133;
@@ -31,8 +38,18 @@
 @colorTxt2: #606266;
 @colorTxt3: #909399;
 @colorTxt4: #C0C4CC;
+@colorTxt5: #f2f2f2;
 
 
 
 @headerHeight: 50px;
-@contentWidth: 1280px;
+@menuWidth: 200px;
+
+.colorBaseFade(@counter) {
+    background-color: fade(@colorBase, @counter);
+}
+
+.colorFade(@color, @counter) {
+    background-color: fade(@color, @counter);
+}
+

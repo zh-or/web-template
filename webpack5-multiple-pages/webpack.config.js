@@ -1,18 +1,13 @@
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-/*
-* HtmlWebPackPlugin里面用的lodash的template来解析模板
-* 所以可以这样在html里面引用其他共用文件
-* 1. 先用html-loader加载出来html文件
-* 2. 然后用lodash的template模板引擎来解析, 不然直接引用是无法解析里面引用的变量的
-* 3. :)
-* <%=  _.template(require('html-loader!@base/components/header.html').default)(env)  %>
-* */
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const webpack = require('webpack');
 const copyWebpackPlugin = require('copy-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin');
 
 let path = require('path');
 let fs = require('fs');
@@ -29,38 +24,40 @@ function resolve(dir) {
     return path.join(__dirname, dir)
 }
 
-////////////////////////////////////////////////////////////////////////////////////
 
-const devMode = process.env.NODE_ENV !== "production";
-const SERVER_PORT = 9000;
-const publicPath = '/';//资源引用前缀
-const outDirPreFix = 'static/';//资源输出目录前缀, 如果是目录则需要反斜杠结尾
-
-
-const htmlEnv = {
-    /*html 环境变量*/
-    prefixTitle: '风车网 - ',//页面title前缀
-    logoName: '风车网',
-    publicPath: publicPath,
-    headKeyPre: ['风车网', '热搜', '热搜榜', '算命', '狗屁不通文章生成', '万年历'].join(','),
-    isDev: devMode,
-};
+function getDirs(path, fullPath) {
+    fullPath = !!fullPath;
+    let arr = fs.readdirSync(path);
+    let res = [];
+    arr.forEach(f => {
+        let state = fs.statSync(path + f);
+        if(state.isDirectory()) {
+            res.push(fullPath ? path + f : f);
+        }
+    })
+    return res;
+}
 
 
 let alias = {
-    '@base': resolve('src/'),//直接用@可能会和vue冲突
+    '@base': resolve('src/'),
+    'vue$': 'vue/dist/vue.esm-bundler.js',
 };
 
 
-////////////////////////////////////////////////////////////////////////////////////
+module.exports = (env, argv, htmlEnv,
+                  SERVER_PORT,
+                  publicPath,
+                  outDirPreFix) => {
 
+    let devMode = htmlEnv.mode !== 'prod';
+    htmlEnv.isDev = devMode;
 
-module.exports= (env, argv) => {
-    console.log(argv);
-    if(env.WEBPACK_SERVE) {//dev
-
+    console.log('devMode:' + devMode, '\n', argv);
+    if(env.WEBPACK_SERVE) {
+        fs.rmSync(resolve('dist'), {recursive : true, force : true});
     }
-    if(env.WEBPACK_BUILD) {//编译时删除dist的文件
+    if(env.WEBPACK_BUILD) {
         fs.rmSync(resolve('dist'), {recursive : true, force : true});
     }
 
@@ -72,23 +69,39 @@ module.exports= (env, argv) => {
         entrys['main'] = mainPath;
     }
 
-    let dirs = fs.readdirSync('./src/pages/');
+    let dirs = getDirs('./src/pages/');
     dirs.forEach((key) => {
+
         let filename = `${key}`;
-        if(filename.startsWith('vue-')) {
-            //单独处理一下?
 
+        let pageConfig = {
+            template: resolve(`src/pages/${filename}/index.html`),
+            filename: `${filename}.html`,
+            entry: resolve(`src/pages/${filename}/index.js`),
         }
-        //每个目录增加alias
-        alias[key] = `@${key}`;
 
-        entrys[filename] = resolve(`src/pages/${key}/index.js`);
+        let configFilePath = `./src/pages/${filename}/config.js`;
+        if(fs.existsSync(configFilePath)) {
+            let selfConfig = require(configFilePath);
+            pageConfig.template = selfConfig.template || pageConfig.template;
+            pageConfig.filename = selfConfig.filename || pageConfig.filename;
+            pageConfig.entry = selfConfig.entry || pageConfig.entry;
+        }
+
+        //每个目录增加alias
+        if(alias.hasOwnProperty(filename)) {
+            console.error('alias 有重复, 只生效最后一个:', filename);
+        }
+        alias[`@${filename}`] = resolve(`src/pages/${filename}`) ;
+
+        entrys[filename] = pageConfig.entry;
         plugins.push(new HtmlWebPackPlugin({
-            template: resolve(`src/pages/${key}/index.html`),
-            filename: `${key}.html`,
+            template: pageConfig.template,
+            filename: pageConfig.filename,
             minify: false,
-            chunks: ['main'/*每个都引入全局引入的文件*/, filename]
+            chunks: ['main'/*每个都引入全局引入的文件*/, filename],
         }));
+
     });
 
     //环境变量
@@ -101,7 +114,11 @@ module.exports= (env, argv) => {
         env: JSON.stringify({
             mode: argv.mode,
             ...htmlEnv
-        })
+        }),
+        //vue3新增 https://cn.vuejs.org/api/compile-time-flags.html#configuration-guides
+        __VUE_OPTIONS_API__: 'true',
+        __VUE_PROD_DEVTOOLS__: `${devMode}`,
+        __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: `${devMode}`
     }));
 
     //复制public内的文件到dist
@@ -116,36 +133,69 @@ module.exports= (env, argv) => {
 
     //抽取css到单独的文件
     plugins.push(new MiniCssExtractPlugin({
-        filename: `${outDirPreFix}style/[name].css`
+        filename: `${outDirPreFix}style/[name].css`,
+        ignoreOrder: true
     }));
 
-    plugins.push(new VueLoaderPlugin());
+    //svg 输出到html
+    /*plugins.push(new SpriteLoaderPlugin({
+        plainSprite: true,
+        spriteAttrs: {
+            style: 'visibility:hidden'
+        }
+    }));*/
+
+    plugins.push(new VueLoaderPlugin({
+        compilerOptions: {
+            hoistStatic: false,
+        }
+    }));
+    
+    //分析 文件占用时启用这个插件
+    //yarn run build
+    /*plugins.push(new BundleAnalyzerPlugin({
+        analyzerMode: 'server',
+        openAnalyzer: true,
+    }));*/
+
+    console.log('alias', alias);
+
     return {
+        stats: {
+            modules: true,
+        },
         entry: {
             ...entrys,
         },
         plugins: plugins,
         output: {
-            filename: `${outDirPreFix}js/[name].[hash].js`,
+            filename: devMode ? `${outDirPreFix}js/[name][chunkhash:3].js` : `${outDirPreFix}js/[name][chunkhash:3].js`,
             path: resolve('dist'),
             publicPath: publicPath,
         },
 
         optimization: {
+            usedExports: true,
             runtimeChunk: 'single',
+            minimize: !devMode, //true,
             minimizer: [
-                // 在 webpack@5 中，你可以使用 `...` 语法来扩展现有的 minimizer（即 `terser-webpack-plugin`），将下一行取消注释
                 `...`,
-                new CssMinimizerPlugin(),//生产环境压缩css
+                new CssMinimizerPlugin(),
             ],
+            runtimeChunk: { name: "lib" },
             splitChunks: {
                 cacheGroups: {
-                    //打包公共模块
                     commons: {
-                        chunks: 'initial', //initial表示提取入口文件的公共部分
-                        minChunks: 2, //表示提取公共部分最少的文件数
-                        minSize: 0, //表示提取公共部分最小的大小
-                        name: 'commons' //提取出来的文件命名
+                        chunks: 'initial',
+                        minChunks: 2,
+                        minSize: 0,
+                        name: 'lib'
+                    },
+                    lib: {
+                        name: "lib",
+                        test: /node_modules/,
+                        chunks: "all",
+                        priority: 10
                     }
                 }
             }
@@ -156,22 +206,13 @@ module.exports= (env, argv) => {
 
         module: {
             rules: [
-                /*
-                * 如果引入了html-loader HtmlWebPackPlugin就不会解析模板了
-                * */
-               /* {
-                    test: /\.html$/i,
-                    loader: "html-loader",
-                    options: {
-                        // Disables attributes processing
-                        sources: false,
-                    },
-                },*/
+
                 {
-                    test: /\.(png|svg|gif|jpe?g)$/,
+                    //test: /\.(png|svg|gif|jpe?g)$/,
+                    test: /\.(png|gif|jpe?g|svg)$/,
                     type: 'asset/resource',
                     generator: {
-                        filename: `${outDirPreFix}img/[name].[hash:6].[ext]`,
+                        filename: `${outDirPreFix}img/[name][ext]`,
                     }
                 },
                 {
@@ -210,12 +251,33 @@ module.exports= (env, argv) => {
                     test: /\.vue$/,
                     loader: 'vue-loader'
                 },
-
             ]
         },
+        mode: argv.mode,
+        //devtool: devMode ? 'source-map' : 'hidden-source-map',
+        devtool: devMode ? 'source-map' : false,
         devServer: {
             port: SERVER_PORT,
-            hot: true
+            allowedHosts: 'all',
+            hot: true,
+            devMiddleware: {
+                //dev 运行时写出到硬盘
+                index: true,
+                serverSideRender: true,
+                //publicPath: '/publicPathForDevServe',
+                writeToDisk: true,
+            },
+            client: {
+                overlay: false,
+                webSocketURL: `ws://127.0.0.1:${SERVER_PORT}/ws`
+            },
+            proxy: {
+                '/api/*': {
+                    ws: true,
+                    changeOrigin: true,
+                    target: 'https://xxx.xx.com/'
+                },
+            }
         },
     };
 }

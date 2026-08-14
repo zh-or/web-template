@@ -1,45 +1,42 @@
 import req from './request.config.js';
-import {url} from "./link";
+import msg from '@base/components/msg.js';
+import u from '@base/lib/tools.js';
+import {getHost, getImgUrl} from '@base/api/host.js';
+import {configStore} from '@base/lib/store.js';
+import {toRaw} from 'vue';
 
-let service = {
-    /*自动生成方法*/
-};
 
-function makeService(url, service, req) {
-    let keys = Object.keys(url);
-
-    keys.forEach(k => {
-        if (!service.hasOwnProperty(k)) {
-            service[k] = function (data) {
-
-                let val = url[k];
-                let tmp = val.split('|');
-                if (!tmp || tmp.length != 2) {
-                    return req.get(tmp[1], data);
-                }
-                let m = tmp[0].toUpperCase();
-                if (m == 'GET') {
-                    return req.get(tmp[1], data);
-                } else if (m == 'POST') {
-                    return req.post(tmp[1], data);
-                } else if (m == 'FORMDATA') {
-                    return req.formData(tmp[1], data);
-                } else if (m == 'PATCH') {
-                    return req.patch(tmp[1], data);
-                } else if (m == 'DELETE') {
-                    return req.delete(tmp[1], data);
-                } else {
-                    console.log(tmp[1] + '\n暂不支持:' + m + ', 其他方法请自定义');
-                }
-                return Promise.reject('不支持的请求方式');
-            };
-
-        }
-    });
+let url = {
 
 }
 
+//加载所有links下的js到url对象
+const reqFiles = require.context('./links', false, /\.js/);
+const requireAll = requireContext => {
+    requireContext.keys().map(path => {
+        let link = requireContext(path).default;
+        Object.keys(link).forEach(k => {
+            if(url.hasOwnProperty(k)) {
+                console.error('接口重复:', k, link[k]);
+            } else {
+                url[k] = link[k];
+            }
+        })
+    });
+};
+requireAll(reqFiles);
 
-makeService(url, service, req);
+
+
+
+let service = {
+    /*自动生成方法*/
+
+};
+
+
+//解析url生成api调用对象
+u.makeService(url, service, req);
+
 
 export default service;

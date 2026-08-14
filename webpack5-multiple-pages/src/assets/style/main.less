@@ -1,14 +1,89 @@
+@import "./transition.less";
+@import "./media.less";
+@import "./icons.less";
+
 body {
-    background-color: #f2f2f2;
+    background-color: @colorTxt5;
+    color: @colorTxt1;
+    font-size: 14px;
 }
 
-.main-wrap {
+#tmp_toast {
+    letter-spacing: 2px;
+}
+
+.none {
+    font-size: 13px;
+    padding: 10px ;
+    color: @colorTxt2;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+
+    &.form-inline {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .item-inline {
+        .el-form-item__content {
+            flex-wrap: nowrap;
+
+            &.wrap {
+                flex-wrap: wrap;
+            }
+
+            .el-input {
+                width: auto;
+                flex-grow: 1;
+            }
+        }
+    }
+
+    .block {
+        width: 100%;
+    }
+
+    .item {
+        padding: 10px 5px;
+        display: flex;
+        align-items: center;
+
+        input, textarea {
+            flex-grow: 1;
+            flex-shrink: 0;
+            font-family: sans-serif;
+        }
+
+        & > span {
+            text-align: right;
+            padding-right: 10px;
+            min-width: 80px;
+            display: inline-block;
+            flex-shrink: 0;
+            color: @colorTxt1;
+        }
+    }
+
+    .form-btn-item {
+        display: flex;
+
+        .btn {
+            flex-shrink: 0;
+            margin-left: 10px;
+            margin-right: 0;
+        }
+    }
+
+    .form-btn {
+        text-align: center;
+
+        .btn + .btn {
+            margin-left: 20px;
+        }
+    }
 
 }
 
-
-
-
-@media screen and (max-width: @contentWidth) {
-
-}

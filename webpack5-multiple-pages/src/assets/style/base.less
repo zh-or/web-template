@@ -1,5 +1,4 @@
 html, body {
-    font-family: 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans CJK SC', Sathu, EucrosiaUPC, Arial, Helvetica, sans-serif;
     height: 100%;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
@@ -7,32 +6,89 @@ html, body {
     margin: 0;
 }
 
+body, span, a, pre {
+    line-height: 1.6em;
+    font-family: 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans CJK SC', Sathu, EucrosiaUPC, Arial, Helvetica, sans-serif;
+}
+
+button, .btn, a {
+    touch-action: manipulation;
+}
+
+.f-big {
+    font-size: 20px;
+}
+
+.f-small {
+    font-size: 18px;
+}
+
+.f-normal {
+    font-size: 14px;
+}
+
+.f-mini {
+    font-size: 12px;
+}
+
+.f-b {
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: "iconfont";
+    src: url('../fonts/iconfont.woff2?t=1736304366814') format('woff2'),
+    url('../fonts/iconfont.woff?t=1736304366814') format('woff'),
+    url('../fonts/iconfont.ttf?t=1736304366814') format('truetype');
+}
+
+.icon {
+    font-family: "iconfont" !important;
+    color: currentColor;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    vertical-align: middle;
+
+    & + * {
+        vertical-align: middle;
+    }
+
+    &.b {
+        font-weight: bold;
+    }
+}
+
+#app {
+    height: 100%;
+}
+
 * {
+    //vertical-align: middle;//影响对齐
     box-sizing: border-box;
     outline: none;
     -webkit-appearance: none;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
-button, .btn, a {
-    border: 0;
-    background-color: transparent;
-    transition: opacity 200ms;
-
-    &:active {
-        opacity: .7;
-    }
-
+button, input, optgroup, select, textarea {
+    font-family: sans-serif;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0
 }
 
-button, .btn {
+span, a, i, b {
+    display: inline-block;
+}
 
-    &:hover {
-        background-color: @colorHover;
-    }
+.btn, a {
+    //border: 0;
+    //background-color: transparent;
 
-    &:active {
-        background-color: @colorFocus;
+    &:active, &.active{
+        opacity: .7;
     }
 }
 
@@ -41,10 +97,67 @@ a {
     color: #333333;
 }
 
+.hide {
+    display: none!important;
+}
+
+.show {
+    display: block!important;
+}
 
 .box-shadow {
     box-shadow: 1px 1px 9px 0px rgba(0, 0, 0, 0.14);
+    z-index: 2;
 }
+
+.box-shadow-rb {
+    box-shadow: 2px 2px 0 rgb(0 0 0 / 5%), 4px 4px 8px rgb(0 0 0 / 10%);
+    z-index: 2;
+}
+
+.txt-left {
+    text-align: left;
+}
+
+.txt-right {
+    text-align: right;
+}
+
+.txt-center {
+    text-align: center;
+}
+
+.p10 { padding: 10px; }
+.p20 { padding: 20px; }
+
+.pl5 { padding-left: 5px;}
+.pl10 { padding-left: 10px;}
+.pl20 { padding-left: 20px;}
+
+.pr10 { padding-right: 10px;}
+.pr20 { padding-right: 20px;}
+
+.pt10 { padding-top: 10px; }
+.pt20 { padding-top: 20px; }
+
+.pb10 { padding-bottom: 10px; }
+.pb20 { padding-bottom: 20px; }
+
+.ptb10 { padding-top: 10px; padding-bottom: 10px; }
+
+.ml0 { margin-left: 0!important; }
+.mr0 { margin-right: 0!important; }
+.m0 { margin: 0!important; }
+.ml10 { margin-left: 10px; }
+
+.ml20 { margin-left: 20px; }
+.mr10 { margin-right: 10px; }
+.mr20 { margin-right: 20px; }
+.mt10 { margin-top: 10px; }
+.mt20 { margin-top: 20px; }
+.mb5 { margin-bottom: 5px; }
+.mb10 { margin-bottom: 10px; }
+.mb20 { margin-bottom: 20px; }
 
 .txt-ellipsis {
     overflow: hidden;
@@ -60,7 +173,6 @@ a {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 
-    display: -webkit-inline-box;
 
     overflow-wrap: break-word;
     word-break: break-all;
@@ -68,19 +180,21 @@ a {
     overflow: hidden;
 }
 
-.cf:after {
-    content: " ";
-    display: table;
-    clear: both;
-}
+.cf:after { content: " "; display: table; clear: both; }
+.fl { float: left; }
+.fr { float: right; }
 
-.fl {
-    float: left;
-}
-
-.fr {
-    float: right;
-}
+.f-v { display: flex; flex-direction: column;}
+.flex { display: flex;}
+.f-wrap { flex-wrap: wrap; }
+.f-grow { flex-grow: 1; }
+.f-s0 { flex-shrink: 0; }
+.f-v-center { align-items: center; }
+.f-h-center { justify-content: center; }
+.f-h-sb { justify-content: space-between; }
+.f-h-sa { justify-content: space-around; }
+.f-h-lr { justify-content: space-between; }
+.f-h-end {justify-content: flex-end; }
 
 /*scrollbar*/
 ::-webkit-scrollbar-track-piece {
@@ -106,4 +220,81 @@ a {
     height: 30px;
     background-color: #9f9f9f;
     -webkit-border-radius: 8px
+}
+
+.hand {
+    cursor: pointer;
+}
+
+.no-sel {
+    user-select: none;
+}
+
+.color-base {
+    color: @colorBase!important;
+}
+
+.color-warning {
+    color: @colorWarning!important;
+}
+
+.color-danger {
+    color: @colorDanger!important;
+}
+
+.color-hint {
+    color: @colorTxt3;
+}
+
+.txt-under {
+    text-decoration: underline;
+}
+
+
+#tmp_wait circle,
+.loading-wrap circle {
+    stroke: @colorBase;
+}
+
+#tmp_wait,
+.loading-wrap {
+    color: @colorBase;
+}
+
+
+table.table {
+    @borderColor: @colorTxt4;
+    border: 1px solid @borderColor;
+
+    &.body-center {
+        tbody td {
+            text-align: center;
+        }
+    }
+
+    thead {
+        th {
+            padding: 5px ;
+        }
+
+        th + th {
+            border-left: 1px solid @borderColor;
+        }
+    }
+
+    tbody {
+        tr:nth-child(even) {
+            background-color: @colorTxt5;
+        }
+        td {
+            padding: 5px;
+            border-top: 1px solid @borderColor;
+
+
+        }
+
+        td + td {
+            border-left: 1px solid @borderColor;
+        }
+    }
 }

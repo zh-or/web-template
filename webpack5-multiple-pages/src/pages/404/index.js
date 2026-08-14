@@ -1,30 +1,25 @@
-import './index.less';
+import './assets/style.less';
+import {createApp} from 'vue';
+import ElementPlus from 'element-plus';
+import 'element-plus/dist/index.css';
+import '@base/assets/style/reele.less';
+import QuestionHint from '@base/components/widget/QuestionHint.vue';
 
-import t from '../../../../lib/index.js';
+import {store, initStore} from '@base/lib/store.js';
+function loadAndMount(com, id, use, props) {
+    let app = createApp(com, props);
 
-async function test() {
-    //防抖节流测试
-    /*let obj;
-    for(let i = 0; i < 100; i ++) {
-        obj = t.throttle(obj, function() {
-            console.log('i:' + i, new Date().toLocaleString())
-        }, 1000, true)
+    app.component('QuestionHint', QuestionHint);
+    app.use(ElementPlus);
+    app.use(store);
 
-        await t.sleep(100);
-    }
-*/
-
-    let obj2;
-    let last = Date.now();
-    for(let i = 0; i < 100; i ++) {
-        obj2 = t.debounce(obj2, function() {
-            console.log('i:' + i, Date.now() - last);
-            last = Date.now();
-        }, 500)
-
-        await t.sleep(10);
+    if(use) {
+        use.forEach(c => app.use(c));
     }
 
+    initStore();
+    app.mount('#' + id);
 }
 
-test();
+
+
