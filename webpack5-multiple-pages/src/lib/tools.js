@@ -131,6 +131,51 @@ export default {
     },
     htmlEncode(str) {
         return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    },
+    calc(a, m, b) {
+        let da = new decimal(a);
+        let db = new decimal(b);
+        let r = '0';
+        switch(m) {
+            case '+': r = da.add(db); break;
+            case '-': r = da.sub(db); break;
+            case '*': r = da.mul(db); break;
+            case '/': r = da.div(db); break;
+            case '%': r = da.mod(db); break;
+            default:
+                r = new decimal(0);
+        }
+        
+        r = r.toNumber();
+        r = isNaN(r) ? 0 : r;
+        
+        //console.log(`calc: ${a} ${m} ${b} = ${r}`);
+        return r;
+    },
+    calcEx() {
+        let params = [...arguments];
+        let res = null, m = null;
+        params.forEach(v => {
+            if(res === null) res = v;
+            else if(m === null) m = v;
+            else {
+                res = this.calc(res, m, v);
+                m = null;
+            }
+        });
+        return res;
+    },
+    queryToObject(str) {
+        str = str || '';
+        let obj = {};
+        let kv = str.split('&');
+        kv.forEach(item => {
+            let arr = item.split('=');
+            if(arr.length >= 2) {
+                obj[arr[0]] = arr[1];
+            }
+        })
+        
+        return obj;
     }
-
 }

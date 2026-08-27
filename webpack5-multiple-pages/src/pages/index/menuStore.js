@@ -56,7 +56,10 @@ export default defineStore('menuStore', {
             this.isCollapse = collapse;
         },
         addCache(obj) {
-            if(!this.cacheViews.some(v => v.name === obj.name)) {
+            let old = this.cacheViews.find(v => v.path === obj.path)
+            if(old) {
+            
+            } else {
                 this.cacheViews.push(obj);
             }
         },

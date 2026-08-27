@@ -3,7 +3,7 @@
     <div class="menu-wrap f-s0 f-v">
         <div class="menu-logo flex f-v-center f-h-center f-s0">
             <img :src="require('@base/assets/img/logo.png')"/>
-            <span class="ml10" v-if="delayShowMenu">市场投标管理系统</span>
+            <span class="ml10" v-if="delayShowMenu">xxx</span>
         </div>
         <MenuView class="f-grow" />
     </div>
@@ -27,11 +27,12 @@
                         <div class="flex hand f-v-center">
                             <span class="avatar">{{menuStore.firstName}}</span>
                             <span class="user-info">
-                              {{menuStore.userInfo.housekeeper.memberName}}<span class="icon icon-down ml10"></span>
+                              {{menuStore.userInfo.userNickname}}<span class="icon icon-down ml10"></span>
                             </span>
                         </div>
                         <template #dropdown>
                             <el-dropdown-menu>
+                                <el-dropdown-item command="resetpwd">修改密码</el-dropdown-item>
                                 <el-dropdown-item command="quit">退出登录</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
@@ -85,6 +86,39 @@
     </div>
 
 </div>
+<el-dialog title="修改密码"
+           width="400px"
+           center
+           :close-on-press-escape="false"
+           :close-on-click-modal="false"
+           v-model="resetPwdData.dlg.show">
+    <el-form class="form full-input"
+             :model="resetPwdData.dlg.form"
+             :rules="resetPwdData.dlg.rules"
+             ref="resetDlgForm"
+             :disabled="resetPwdData.dlg.loading"
+             label-width="auto">
+
+        <el-form-item label="旧密码" prop="userPwd">
+            <el-input v-model="resetPwdData.dlg.form.userPwd" placeholder="请输入旧密码"/>
+        </el-form-item>
+        <el-form-item label="新密码" prop="userNewPwd" >
+            <el-input v-model="resetPwdData.dlg.form.userNewPwd" placeholder="请输入新密码"/>
+        </el-form-item>
+        <el-form-item label="重复新密码" prop="userPwdConfirm" >
+            <el-input v-model="resetPwdData.dlg.form.userPwdConfirm" placeholder="重复输入新密码"/>
+        </el-form-item>
+
+    </el-form>
+    <template #footer>
+        <el-button type="primary"
+                   v-loading="resetPwdData.dlg.loading"
+                   @click="submitResetDlgForm()">保存</el-button>
+        <el-button :disabled="resetPwdData.dlg.loading"
+                   @click="resetPwdData.dlg.show = false">取消</el-button>
+    </template>
+</el-dialog>
+
 </template>
 <script setup>
 
@@ -108,6 +142,7 @@ import {getHost, getImgUrl} from '@base/api/host.js';
 import {getRule} from "@base/components/rules.js";
 import {waitLogin, userStore } from "@base/lib/store.js";
 import useMenuStore from './menuStore.js';
+import md5 from "@zh-or/lib/md5.js";
 
 import {
     reactive, ref, useTemplateRef, toRaw,
@@ -221,12 +256,12 @@ waitLogin(() => {
 
 let breadcrumbs = computed(() => {
     let arr = [{
-        name: '市场管理系统'
+        name: 'xx管理系统'
     }];
     route.matched.forEach(item => {
         if(item.meta && item.meta.title) {
             arr.push({
-                name: item.meta.title,
+                name: typeof item.meta.title === 'function' ? item.meta.title(route.query) : item.meta.title,
             })
         }
     });
@@ -253,7 +288,62 @@ function handleUserCommand(cmd) {
             user.outLogin();
         })
         .catch(() => {})
+    } else if(cmd === 'resetpwd') {
+
+        t.clearObject(resetPwdData.dlg.form);
+        resetPwdData.dlg.show = true;
     }
+}
+
+let resetDlgForm = useTemplateRef('resetDlgForm');
+let resetPwdData = reactive({
+    dlg: {
+        show: false,
+        loading: false,
+        form: {
+            "userPwd": "",
+            "userNewPwd": "",
+            "userPwdConfirm": ""
+        },
+        rules: {
+            userPwd: getRule('请输入旧密码'),
+            userNewPwd: getRule('请输入新密码'),
+            userPwdConfirm: [
+                { validator: (rule, value, callback) => {
+                        if(resetPwdData.dlg.form.userNewPwd !== value) {
+                            callback(new Error('两次新密码不一致'));
+                        } else {
+                            callback();
+                        }
+                    }, trigger: 'blur', required: true,
+                }
+            ],
+        }
+    }
+})
+function submitResetDlgForm() {
+    resetDlgForm.value.validate((v) => {
+        if(v) {
+            resetPwdData.dlg.loading = true;
+            mapi.userResetSelfPwd({
+                "userPwd": md5(resetPwdData.dlg.form.userPwd),
+                "userNewPwd": md5(resetPwdData.dlg.form.userNewPwd),
+                "userPwdConfirm": md5(resetPwdData.dlg.form.userPwdConfirm)
+            })
+            .then(res => {
+                if(res.code === 200) {
+                    msg.success('重置密码成功!');
+                    resetPwdData.dlg.show = false;
+                }
+                resetPwdData.dlg.loading = false;
+            })
+            .catch(e => {
+                console.error('用户重置密码失败:', e);
+                msg.error('重置密码出错!');
+                resetPwdData.dlg.loading = false;
+            })
+        }
+    })
 }
 
 if(!user.isLogin) {
@@ -361,6 +451,8 @@ if(!user.isLogin) {
                         .name {
                             min-width: 2.5em;
                             margin-right: .4em;
+                            font-size: 12px;
+                            padding: 2px 0;
                         }
 
                         .icon {
